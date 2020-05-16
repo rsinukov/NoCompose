@@ -12,56 +12,46 @@ class MainActivity : AppCompatActivity() {
 
     val view = viewTree(this, State.create()) {
       column {
-        child {
-          container(padding = static(8)) {
-            label {
-              text = static("It's my sample")
-            }
+        +label(
+          text = static("It's my sample")
+        )
+
+        +row {
+          +image(
+            imageResId = state.imageResStart
+          ).layout {
+            width = static(Const(48))
+            height = static(Const(48))
+          }
+
+          +column {
+            +label(text = state.userName)
+            +label(text = state.quote)
+          }.layout {
+            weight = static(1F)
+            height = static(Wrap)
+          }
+
+          +image(imageResId = state.imageResEnd).layout {
+            width = static(Const(32))
+            height = static(Const(32))
           }
         }
-        child {
-          row {
-            child(width = static(Const(48)), height = static(Const(48))) {
-              image {
-                imageResId = state.imageResStart
-              }
-            }
-            child(weight = static(1F), height = static(Wrap)) {
-              column {
-                child {
-                  label {
-                    text = state.userName
-                  }
-                }
-                child {
-                  label {
-                    text = state.quote
-                  }
-                }
-              }
-            }
-            child(width = static(Const(32)), height = static(Const(32))) {
-              image {
-                imageResId = state.imageResEnd
-              }
-            }
-          }
+
+        +ifComponent(
+          value = state.showTrue,
+          viewT = label(text = static("This is true")),
+          viewF = label(text = static("This is false"))
+        ).layout {
+          gravity = static(Column.Gravity.Center)
+          width = static(Wrap)
+          weight = static(1F)
         }
-        child(gravity = static(Column.Gravity.Center), width = static(Wrap), weight = static(1F)) {
-          ifComponent(
-            value = state.showTrue,
-            viewT = label { text = static("This is true") },
-            viewF = label { text = static("This is false") }
-          )
-        }
-        child {
-          container(margin = static(8)) {
-            button {
-              text = static("Change state")
-              onPress = { changeState(state) }
-            }
-          }
-        }
+
+        +button(
+          text = static("Change state"),
+          onPress = { changeState(state) }
+        )
       }
     }
 

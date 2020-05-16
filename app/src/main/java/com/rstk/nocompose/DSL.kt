@@ -9,41 +9,33 @@ class ViewTree<T>(val context: Context, val state: T)
 @DslMarker
 annotation class NoCompose
 
-fun <T> ViewTree<T>.column(builder: Column.() -> Unit): Column {
+fun <S> ViewTree<S>.column(builder: Column.() -> Unit): Column {
   val column = Column(context)
   column.builder()
   return column
 }
 
-fun <T> ViewTree<T>.row(builder: Row.() -> Unit): Row {
+fun <S> ViewTree<S>.row(builder: Row.() -> Unit): Row {
   return Row(context).apply(builder)
 }
 
-fun <T> ViewTree<T>.label(builder: Label.() -> Unit): Label {
-  return Label(context).apply(builder)
+fun <S> ViewTree<S>.label(text: Observable<String?>): Label {
+  return Label(context, text)
 }
 
-fun <T> ViewTree<T>.button(builder: Button.() -> Unit): Button {
-  return Button(context).apply(builder)
+fun <S> ViewTree<S>.button(
+  text: Observable<String?>,
+  onPress: () -> Unit
+): Button {
+  return Button(context, text, onPress)
 }
 
-fun <T> ViewTree<T>.image(builder: Image.() -> Unit): Image {
-  return Image(context).apply(builder)
+fun <S> ViewTree<S>.image(imageResId: Observable<Int?>): Image {
+  return Image(context, imageResId)
 }
 
-fun <T> ViewTree<T>.space(builder: Space.() -> Unit): Space {
-  return Space(context).apply(builder)
-}
-
-fun <S> ViewTree<S>.container(
-  margin: Observable<Int> = static(0),
-  padding: Observable<Int> = static(0),
-  childBuilder: () -> Component<out View>
-): Container {
-  val container = Container(context, childBuilder.invoke())
-  container.margin = margin
-  container.padding = padding
-  return container
+fun <S> ViewTree<S>.space(): Space {
+  return Space(context)
 }
 
 fun <S> ViewTree<S>.ifComponent(

@@ -11,16 +11,15 @@ import android.widget.TextView
 import com.rstk.nocompose.RowColumn.Size.Fill
 import com.rstk.nocompose.RowColumn.Size.Wrap
 
-//@NoCompose
-abstract class Component<T : View>(protected val context: Context) {
+abstract class Component<V : View>(protected val context: Context) {
 
-  abstract val view: T
+  abstract val view: V
 }
 
-abstract class ContainerComponent<T : ViewGroup>(context: Context) : Component<T>(context) {
+abstract class ContainerComponent<V : ViewGroup>(context: Context) : Component<V>(context) {
 
   operator fun <V : View> Component<V>.unaryPlus() {
-    this@ContainerComponent.view.addView(this.view)
+    this@ContainerComponent.view.addView(view)
   }
 }
 
@@ -34,15 +33,30 @@ class Column(context: Context) : RowColumn(context) {
     view.orientation = LinearLayout.VERTICAL
   }
 
-  fun <T : View> child(
-    width: Observable<Size> = static(Fill),
-    height: Observable<Size> = static(Wrap),
-    gravity: Observable<Gravity> = static(Gravity.Center),
-    weight: Observable<Float> = static(0F),
-    childBuilder: () -> Component<T>
-  ) {
-    child(width, height, static(Row.Gravity.Center), gravity, weight, childBuilder)
+  fun <V : View> Component<V>.layout(
+    paramsBuilder: LayoutParams.() -> Unit
+  ): Component<V> {
+    val params = LayoutParams()
+    params.paramsBuilder()
+    layoutChild(
+      params.width,
+      params.height,
+      static(Row.Gravity.Center),
+      params.gravity,
+      params.weight,
+      this
+    )
+    return this
   }
+
+  @NoCompose
+  data class LayoutParams(
+    var width: Observable<Size> = static(Fill),
+    var height: Observable<Size> = static(Wrap),
+    var gravity: Observable<Gravity> = static(Gravity.Center),
+    var weight: Observable<Float> = static(0F),
+    var test: Observable<String> = static("")
+  )
 }
 
 
@@ -56,15 +70,29 @@ class Row(context: Context) : RowColumn(context) {
     view.orientation = LinearLayout.HORIZONTAL
   }
 
-  fun <T : View> child(
-    width: Observable<Size> = static(Wrap),
-    height: Observable<Size> = static(Fill),
-    gravity: Observable<Gravity> = static(Gravity.Center),
-    weight: Observable<Float> = static(0F),
-    childBuilder: () -> Component<T>
-  ) {
-    child(width, height, gravity, static(Column.Gravity.Center), weight, childBuilder)
+  fun <V : View> Component<V>.layout(
+    paramsBuilder: LayoutParams.() -> Unit
+  ): Component<V> {
+    val params = LayoutParams()
+    params.paramsBuilder()
+    layoutChild(
+      params.width,
+      params.height,
+      params.gravity,
+      static(Column.Gravity.Center),
+      params.weight,
+      this
+    )
+    return this
   }
+
+  @NoCompose
+  data class LayoutParams(
+    var width: Observable<Size> = static(Fill),
+    var height: Observable<Size> = static(Wrap),
+    var gravity: Observable<Gravity> = static(Gravity.Center),
+    var weight: Observable<Float> = static(0F)
+  )
 }
 
 abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(context) {
@@ -77,18 +105,16 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
 
   override val view: LinearLayout by lazy { LinearLayout(context) }
 
-  protected fun <T : View> child(
+  protected fun <V : View> layoutChild(
     width: Observable<Size>,
     height: Observable<Size>,
     rowGravity: Observable<Row.Gravity>,
     columnGravity: Observable<Column.Gravity>,
     weight: Observable<Float>,
-    childBuilder: () -> Component<T>
+    child: Component<V>
   ) {
     val layoutParams = LinearLayout.LayoutParams(0, 0)
-    val child = childBuilder()
     child.view.layoutParams = layoutParams
-    view.addView(child.view)
 
     var rowGravityValue: Int = Gravity.CENTER_VERTICAL
     var columnGravityValue: Int = Gravity.CENTER_HORIZONTAL
@@ -134,82 +160,50 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
   }
 }
 
-class Label(context: Context) : Component<TextView>(context) {
+@NoCompose
+class Label(context: Context, text: Observable<String?>) : Component<TextView>(context) {
 
   override val view: TextView by lazy { TextView(context) }
 
-  var text: Observable<String?>
-    get() = throw IllegalStateException("No access")
-    set(value) {
-      value.subscribe { view.text = it }
-    }
+  init {
+    text.subscribe { view.text = it }
+  }
 }
 
-class Button(context: Context) : Component<android.widget.Button>(context) {
+@NoCompose
+class Button(
+  context: Context,
+  text: Observable<String?>,
+  onPress: () -> Unit
+) : Component<android.widget.Button>(context) {
 
   override val view: android.widget.Button by lazy { android.widget.Button(context) }
 
-  var text: Observable<String?>
-    get() = throw IllegalStateException("No access")
-    set(value) {
-      value.subscribe { view.text = it }
-    }
-
-  var onPress: () -> Unit
-    get() = throw IllegalStateException("No access")
-    set(value) {
-      view.setOnClickListener { value.invoke() }
-    }
+  init {
+    text.subscribe { view.text = it }
+    view.setOnClickListener { onPress.invoke() }
+  }
 }
 
-class Image(context: Context) : Component<ImageView>(context) {
+@NoCompose
+class Image(context: Context, imageResId: Observable<Int?>) : Component<ImageView>(context) {
 
   override val view: ImageView by lazy { ImageView(context) }
 
-  var imageResId: Observable<Int?>
-    get() = throw IllegalStateException("No access")
-    set(value) {
-      value.subscribe { resId ->
-        view.setImageDrawable(resId?.let { context.resources.getDrawable(it) })
-      }
+  init {
+    imageResId.subscribe { resId ->
+      view.setImageDrawable(resId?.let { context.resources.getDrawable(it) })
     }
+  }
 }
 
+@NoCompose
 class Space(context: Context) : Component<android.widget.Space>(context) {
 
   override val view: android.widget.Space by lazy { android.widget.Space(context) }
 }
 
-class Container(context: Context, val child: Component<out View>) : Component<View>(context) {
-
-  override val view: View by lazy { child.view }
-
-  var margin: Observable<Int>
-    get() = throw IllegalStateException("No access")
-    set(value) {
-      value.subscribe {
-        val marginDp = Math.round(context.resources.displayMetrics.density * it)
-        val layoutParams = child.view.layoutParams as FrameLayout.LayoutParams?
-          ?: ViewGroup.MarginLayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-          )
-        layoutParams.setMargins(marginDp, marginDp, marginDp, marginDp)
-        child.view.layoutParams = layoutParams
-        child.view.requestLayout()
-      }
-    }
-
-  var padding: Observable<Int>
-    get() = throw IllegalStateException("No access")
-    set(value) {
-      value.subscribe {
-        val paddingDp = Math.round(context.resources.displayMetrics.density * it)
-        child.view.setPadding(paddingDp, paddingDp, paddingDp, paddingDp)
-      }
-    }
-}
-
+@NoCompose
 class If(
   context: Context,
   private val viewT: Component<out View>,
@@ -223,9 +217,9 @@ class If(
     set(value) {
       value.subscribe {
         view.removeAllViews()
-        if (it) view.addView(viewT.view)
-        else view.addView(viewF.view)
-        val layoutParams = view.getChildAt(0).layoutParams as FrameLayout.LayoutParams
+        val viewToAdd = if (it) viewT else viewF
+        view.addView(viewToAdd.view)
+        val layoutParams = viewToAdd.view.layoutParams as FrameLayout.LayoutParams
         layoutParams.width = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.gravity = Gravity.CENTER

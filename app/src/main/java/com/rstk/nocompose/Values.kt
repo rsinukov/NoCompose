@@ -1,12 +1,19 @@
 package com.rstk.nocompose
+
+interface Observable<out T> {
+  fun subscribe(listener: (T) -> Unit)
+}
+
+interface Publisher<in T> {
+  fun update(value: T)
+}
+
 class StaticValue<T>(private val value: T) : Observable<T> {
 
   override fun subscribe(listener: (T) -> Unit) {
     listener(value)
   }
 }
-
-fun <T> static(value: T): StaticValue<out T> = StaticValue(value)
 
 class StateValue<T> private constructor() : Observable<T>, Publisher<T> {
 
@@ -64,10 +71,4 @@ class NullableStateValue<T> private constructor() : Observable<T?>, Publisher<T?
   }
 }
 
-interface Observable<out T> {
-  fun subscribe(listener: (T) -> Unit)
-}
-
-interface Publisher<in T> {
-  fun update(value: T)
-}
+fun <T> static(value: T): StaticValue<out T> = StaticValue(value)
