@@ -1,1 +1,0 @@
-/home/rstk/coding/Android/NoCompose/buildSrc/build/classes/kotlin/main/Libraries.class:/home/rstk/coding/Android/NoCompose/buildSrc/build/classes/kotlin/main/Versions.class
