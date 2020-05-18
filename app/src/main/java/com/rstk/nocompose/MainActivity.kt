@@ -2,8 +2,13 @@ package com.rstk.nocompose
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.rstk.nocompose.lib.*
-import com.rstk.nocompose.lib.ContainerComponent.Size.*
+import com.rstk.nocompose.lib.components.ContainerComponent.Size.*
+import com.rstk.nocompose.lib.components.Overlay
+import com.rstk.nocompose.lib.components.Row
+import com.rstk.nocompose.lib.databinding.NullableStateValue
+import com.rstk.nocompose.lib.databinding.StateValue
+import com.rstk.nocompose.lib.databinding.static
+import com.rstk.nocompose.lib.dsl.*
 
 class MainActivity : AppCompatActivity() {
 
