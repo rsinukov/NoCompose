@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.rstk.nocompose.lib.components.ContainerComponent.Size.*
 import com.rstk.nocompose.lib.components.Overlay
 import com.rstk.nocompose.lib.components.Row
-import com.rstk.nocompose.lib.databinding.NullableStateValue
 import com.rstk.nocompose.lib.databinding.StateValue
 import com.rstk.nocompose.lib.databinding.static
 import com.rstk.nocompose.lib.dsl.*
@@ -86,39 +85,39 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun changeState(state: State) {
-    if (state.count.value!! % 2 == 0) {
+    if (state.count.value % 2 == 0) {
       state.imageResStart.update(R.drawable.ic_brightness_low_black_24dp)
       state.imageResEnd.update(R.drawable.ic_brightness_high_black_24dp)
       state.userName.update("user2")
       state.quote.update("Workers of the world unite!\nAll power to the soviets!")
-      state.count.update(state.count.value!! + 1)
+      state.count.update(state.count.value + 1)
       state.showTrue.update(false)
     } else {
       state.imageResStart.update(R.drawable.ic_brightness_high_black_24dp)
       state.imageResEnd.update(R.drawable.ic_brightness_low_black_24dp)
       state.userName.update("user1")
       state.quote.update("I like Kotlin")
-      state.count.update(state.count.value!! + 1)
+      state.count.update(state.count.value + 1)
       state.showTrue.update(true)
     }
   }
 }
 
 data class State private constructor(
-  val imageResStart: NullableStateValue<Int>,
-  val imageResEnd: NullableStateValue<Int>,
-  val userName: NullableStateValue<String>,
-  val quote: NullableStateValue<String>,
+  val imageResStart: StateValue<Int>,
+  val imageResEnd: StateValue<Int>,
+  val userName: StateValue<String>,
+  val quote: StateValue<String>,
   val count: StateValue<Int>,
   val showTrue: StateValue<Boolean>
 ) {
   companion object {
     fun create(): State {
       return State(
-        imageResStart = NullableStateValue.createDefault(R.drawable.ic_brightness_high_black_24dp),
-        imageResEnd = NullableStateValue.createDefault(R.drawable.ic_brightness_low_black_24dp),
-        userName = NullableStateValue.createDefault("user1"),
-        quote = NullableStateValue.createDefault("I like Kotlin"),
+        imageResStart = StateValue.createDefault(R.drawable.ic_brightness_high_black_24dp),
+        imageResEnd = StateValue.createDefault(R.drawable.ic_brightness_low_black_24dp),
+        userName = StateValue.createDefault("user1"),
+        quote = StateValue.createDefault("I like Kotlin"),
         count = StateValue.createDefault(0),
         showTrue = StateValue.createDefault(true)
       )
