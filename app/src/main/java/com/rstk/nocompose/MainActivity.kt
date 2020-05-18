@@ -1,7 +1,7 @@
 package com.rstk.nocompose
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.rstk.nocompose.lib.components.ContainerComponent.Size.*
 import com.rstk.nocompose.lib.components.Overlay
 import com.rstk.nocompose.lib.components.Row
