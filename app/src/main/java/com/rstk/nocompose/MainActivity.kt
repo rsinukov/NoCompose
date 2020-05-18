@@ -2,8 +2,8 @@ package com.rstk.nocompose
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.rstk.nocompose.RowColumn.Size.Const
-import com.rstk.nocompose.RowColumn.Size.Wrap
+import com.rstk.nocompose.lib.*
+import com.rstk.nocompose.lib.ContainerComponent.Size.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,21 +32,43 @@ class MainActivity : AppCompatActivity() {
             height = static(Wrap)
           }
 
-          +image(imageResId = state.imageResEnd).layout {
+          +image(
+            imageResId = state.imageResEnd
+          ).layout {
             width = static(Const(32))
             height = static(Const(32))
+            gravity = static(Row.Gravity.Center)
           }
         }
 
-        +ifComponent(
-          value = state.showTrue,
-          viewT = label(text = static("This is true")),
-          viewF = label(text = static("This is false"))
-        ).layout {
-          gravity = static(Column.Gravity.Center)
-          width = static(Wrap)
+        +overlay {
+          +image(imageResId = state.imageResEnd)
+            .layout {
+              gravity = static(Overlay.Gravity.Center)
+            }
+          +label(text = static("Text on top of image"))
+            .layout {
+              gravity = static(Overlay.Gravity.Center)
+            }
+        }.layout {
           weight = static(1F)
         }
+
+        condition(
+          value = state.showTrue,
+          viewT = label(
+            text = static("This is true")
+          ).layout {
+            width = static(Fill)
+            weight = static(1F)
+          },
+          viewF = label(
+            text = static("This is false")
+          ).layout {
+            width = static(Fill)
+            weight = static(1F)
+          }
+        )
 
         +button(
           text = static("Change state"),

@@ -1,4 +1,4 @@
-package com.rstk.nocompose
+package com.rstk.nocompose.lib
 
 interface Observable<out T> {
   fun subscribe(listener: (T) -> Unit)
@@ -15,7 +15,8 @@ class StaticValue<T>(private val value: T) : Observable<T> {
   }
 }
 
-class StateValue<T> private constructor() : Observable<T>, Publisher<T> {
+class StateValue<T> private constructor() : Observable<T>,
+  Publisher<T> {
 
   private var listeners: MutableSet<(T) -> Unit> = mutableSetOf()
   var value: T? = null
@@ -33,7 +34,8 @@ class StateValue<T> private constructor() : Observable<T>, Publisher<T> {
   }
 
   companion object {
-    fun <T> create(): StateValue<T> = StateValue()
+    fun <T> create(): StateValue<T> =
+      StateValue()
     fun <T> createDefault(value: T): StateValue<T> {
       val stateValue = StateValue<T>()
       stateValue.update(value)
@@ -42,7 +44,8 @@ class StateValue<T> private constructor() : Observable<T>, Publisher<T> {
   }
 }
 
-class NullableStateValue<T> private constructor() : Observable<T?>, Publisher<T?> {
+class NullableStateValue<T> private constructor() : Observable<T?>,
+  Publisher<T?> {
 
   private var listeners: MutableSet<(T?) -> Unit> = mutableSetOf()
   private var isSet: Boolean = false
@@ -62,7 +65,8 @@ class NullableStateValue<T> private constructor() : Observable<T?>, Publisher<T?
   }
 
   companion object {
-    fun <T> create(): NullableStateValue<T> = NullableStateValue()
+    fun <T> create(): NullableStateValue<T> =
+      NullableStateValue()
     fun <T> createDefault(value: T?): NullableStateValue<T> {
       val stateValue = NullableStateValue<T>()
       stateValue.update(value)
@@ -71,4 +75,5 @@ class NullableStateValue<T> private constructor() : Observable<T?>, Publisher<T?
   }
 }
 
-fun <T> static(value: T): StaticValue<out T> = StaticValue(value)
+fun <T> static(value: T): StaticValue<out T> =
+  StaticValue(value)

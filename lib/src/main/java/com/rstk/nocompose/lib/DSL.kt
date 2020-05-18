@@ -1,4 +1,4 @@
-package com.rstk.nocompose
+package com.rstk.nocompose.lib
 
 import android.content.Context
 import android.view.View
@@ -19,8 +19,17 @@ fun <S> ViewTree<S>.row(builder: Row.() -> Unit): Row {
   return Row(context).apply(builder)
 }
 
-fun <S> ViewTree<S>.label(text: Observable<String?>): Label {
-  return Label(context, text)
+fun <S> ViewTree<S>.overlay(builder: Overlay.() -> Unit): Overlay {
+  return Overlay(context).apply(builder)
+}
+
+fun <S> ViewTree<S>.label(
+  text: Observable<String?>,
+  alignment: Observable<Label.TextAlignment> = static(
+    Label.TextAlignment.Center
+  )
+): Label {
+  return Label(context, text, alignment)
 }
 
 fun <S> ViewTree<S>.button(
@@ -36,16 +45,6 @@ fun <S> ViewTree<S>.image(imageResId: Observable<Int?>): Image {
 
 fun <S> ViewTree<S>.space(): Space {
   return Space(context)
-}
-
-fun <S> ViewTree<S>.ifComponent(
-  value: Observable<Boolean>,
-  viewT: Component<out View>,
-  viewF: Component<out View>
-): If {
-  val ifComponent = If(context, viewT, viewF)
-  ifComponent.value = value
-  return ifComponent
 }
 
 fun <V : View, S> viewTree(context: Context, state: S, builder: ViewTree<S>.() -> Component<V>): Component<V> {
