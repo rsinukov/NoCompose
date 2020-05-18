@@ -20,13 +20,10 @@ class Label(
     StartTop, StartCenter, StartBottom, CenterTop, Center, CenterBottom, EndTop, EndCenter, EndBottom
   }
 
-  override val view: TextView by lazy {
-    TextView(
-      context
-    )
-  }
+  override val view: TextView by lazy { TextView(context) }
 
   init {
+    init()
     text.subscribe { view.text = it }
     alignment.subscribe {
       when (it) {
@@ -51,9 +48,10 @@ class Button(
   onPress: () -> Unit
 ) : Component<Button>(context) {
 
-  override val view: Button by lazy { Button(context) }
+  override val view: Button = Button(context)
 
   init {
+    init()
     text.subscribe { view.text = it }
     view.setOnClickListener { onPress.invoke() }
   }
@@ -62,13 +60,10 @@ class Button(
 @NoCompose
 class Image(context: Context, imageResId: Observable<Int?>) : Component<ImageView>(context) {
 
-  override val view: ImageView by lazy {
-    ImageView(
-      context
-    )
-  }
+  override val view: ImageView by lazy { ImageView(context) }
 
   init {
+    init()
     imageResId.subscribe { resId ->
       view.setImageDrawable(resId?.let { context.resources.getDrawable(it) })
     }
@@ -79,4 +74,8 @@ class Image(context: Context, imageResId: Observable<Int?>) : Component<ImageVie
 class Space(context: Context) : Component<Space>(context) {
 
   override val view: Space by lazy { Space(context) }
+
+  init {
+    init()
+  }
 }

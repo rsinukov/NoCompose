@@ -3,7 +3,9 @@ package com.rstk.nocompose
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.rstk.nocompose.lib.components.ContainerComponent.Size.*
+import com.rstk.nocompose.lib.components.Margin
 import com.rstk.nocompose.lib.components.Overlay
+import com.rstk.nocompose.lib.components.Padding
 import com.rstk.nocompose.lib.components.Row
 import com.rstk.nocompose.lib.databinding.StateValue
 import com.rstk.nocompose.lib.databinding.static
@@ -17,27 +19,30 @@ class MainActivity : AppCompatActivity() {
     val view = viewTree(this, State.create()) {
       column {
         +label(
-          text = static("It's my sample")
+          text = static("It's my sample"),
+          padding = static(Padding.create(8))
         )
 
         +row {
           +image(
-            imageResId = state.imageResStart
+            imageResId = state.imageResStart,
+            padding = static(Padding.create(horizontal = 8))
           ).layout {
             width = static(Const(48))
             height = static(Const(48))
           }
 
           +column {
-            +label(text = state.userName)
-            +label(text = state.quote)
+            +label(text = state.userName, padding = static(Padding.create(vertical = 4)))
+            +label(text = state.quote, padding = static(Padding.create(bottom = 4)))
           }.layout {
             weight = static(1F)
             height = static(Wrap)
           }
 
           +image(
-            imageResId = state.imageResEnd
+            imageResId = state.imageResEnd,
+            padding = static(Padding.create(8))
           ).layout {
             width = static(Const(32))
             height = static(Const(32))
@@ -77,7 +82,9 @@ class MainActivity : AppCompatActivity() {
         +button(
           text = static("Change state"),
           onPress = { changeState(state) }
-        )
+        ).layout {
+          margin = static(Margin.create(8))
+        }
       }
     }
 

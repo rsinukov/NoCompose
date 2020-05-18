@@ -4,10 +4,10 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
-import com.rstk.nocompose.lib.dsl.NoCompose
 import com.rstk.nocompose.lib.databinding.Observable
 import com.rstk.nocompose.lib.databinding.static
-import kotlin.math.roundToInt
+import com.rstk.nocompose.lib.dsl.NoCompose
+import com.rstk.nocompose.lib.toDp
 
 class Column(context: Context) : RowColumn(context) {
 
@@ -30,6 +30,7 @@ class Column(context: Context) : RowColumn(context) {
       static(Row.Gravity.Center),
       params.gravity,
       params.weight,
+      params.margin,
       this
     )
     return this
@@ -37,18 +38,11 @@ class Column(context: Context) : RowColumn(context) {
 
   @NoCompose
   data class LayoutParams(
-    var width: Observable<Size> = static(
-      Size.Fill
-    ),
-    var height: Observable<Size> = static(
-      Size.Wrap
-    ),
-    var gravity: Observable<Gravity> = static(
-      Gravity.Center
-    ),
-    var weight: Observable<Float> = static(
-      0F
-    )
+    var width: Observable<Size> = static(Size.Fill),
+    var height: Observable<Size> = static(Size.Wrap),
+    var gravity: Observable<Gravity> = static(Gravity.Center),
+    var margin: Observable<Margin> = static(Margin.create(0)),
+    var weight: Observable<Float> = static(0F)
   )
 }
 
@@ -73,6 +67,7 @@ class Row(context: Context) : RowColumn(context) {
       params.gravity,
       static(Column.Gravity.Center),
       params.weight,
+      params.margin,
       this
     )
     return this
@@ -80,27 +75,20 @@ class Row(context: Context) : RowColumn(context) {
 
   @NoCompose
   data class LayoutParams(
-    var width: Observable<Size> = static(
-      Size.Fill
-    ),
-    var height: Observable<Size> = static(
-      Size.Wrap
-    ),
-    var gravity: Observable<Gravity> = static(
-      Gravity.Center
-    ),
-    var weight: Observable<Float> = static(
-      0F
-    )
+    var width: Observable<Size> = static(Size.Fill),
+    var height: Observable<Size> = static(Size.Wrap),
+    var gravity: Observable<Gravity> = static(Gravity.Center),
+    var weight: Observable<Float> = static(0F),
+    var margin: Observable<Margin> = static(Margin.create(0))
   )
 }
 
 abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(context) {
 
-  override val view: LinearLayout by lazy {
-    LinearLayout(
-      context
-    )
+  override val view: LinearLayout by lazy { LinearLayout(context) }
+
+  init {
+    init()
   }
 
   protected fun <V : View> layoutChild(
@@ -109,6 +97,7 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
     rowGravity: Observable<Row.Gravity>,
     columnGravity: Observable<Column.Gravity>,
     weight: Observable<Float>,
+    margin: Observable<Margin>,
     child: Component<V>
   ) {
     val layoutParams = LinearLayout.LayoutParams(0, 0)
@@ -121,7 +110,7 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
       layoutParams.width = when (it) {
         Size.Fill -> LinearLayout.LayoutParams.MATCH_PARENT
         Size.Wrap -> LinearLayout.LayoutParams.WRAP_CONTENT
-        is Size.Const -> (context.resources.displayMetrics.density * it.dp).roundToInt()
+        is Size.Const -> it.dp.toDp(context)
       }
       child.view.requestLayout()
     }
@@ -129,7 +118,7 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
       layoutParams.height = when (it) {
         Size.Fill -> LinearLayout.LayoutParams.MATCH_PARENT
         Size.Wrap -> LinearLayout.LayoutParams.WRAP_CONTENT
-        is Size.Const -> (context.resources.displayMetrics.density * it.dp).roundToInt()
+        is Size.Const -> it.dp.toDp(context)
       }
       child.view.requestLayout()
     }
@@ -155,5 +144,6 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
       layoutParams.weight = it
       child.view.requestLayout()
     }
+    addMargins(child = child, margin = margin)
   }
 }

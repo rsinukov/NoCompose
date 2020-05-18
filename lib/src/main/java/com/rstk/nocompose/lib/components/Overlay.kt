@@ -4,9 +4,11 @@ import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import com.rstk.nocompose.lib.dsl.NoCompose
 import com.rstk.nocompose.lib.databinding.Observable
 import com.rstk.nocompose.lib.databinding.static
+import com.rstk.nocompose.lib.dsl.NoCompose
+import com.rstk.nocompose.lib.toDp
+import android.view.Gravity as AndroidGravity
 
 class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
 
@@ -14,10 +16,10 @@ class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
     StartTop, StartCenter, StartBottom, CenterTop, Center, CenterBottom, EndTop, EndCenter, EndBottom
   }
 
-  override val view: FrameLayout by lazy {
-    FrameLayout(
-      context
-    )
+  override val view: FrameLayout by lazy { FrameLayout(context) }
+
+  init {
+    init()
   }
 
   fun <V : View> Component<V>.layout(
@@ -29,6 +31,7 @@ class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
       params.width,
       params.height,
       params.gravity,
+      params.margin,
       this
     )
     return this
@@ -36,21 +39,17 @@ class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
 
   @NoCompose
   data class LayoutParams(
-    var width: Observable<Size> = static(
-      Size.Fill
-    ),
-    var height: Observable<Size> = static(
-      Size.Wrap
-    ),
-    var gravity: Observable<Gravity> = static(
-      Gravity.Center
-    )
+    var width: Observable<Size> = static(Size.Fill),
+    var height: Observable<Size> = static(Size.Wrap),
+    var gravity: Observable<Gravity> = static(Gravity.Center),
+    var margin: Observable<Margin> = static(Margin.create(0))
   )
 
   private fun <V : View> layoutChild(
     width: Observable<Size>,
     height: Observable<Size>,
     gravity: Observable<Gravity>,
+    margin: Observable<Margin>,
     child: Component<V>
   ) {
     val layoutParams = FrameLayout.LayoutParams(0, 0)
@@ -60,7 +59,7 @@ class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
       layoutParams.width = when (it) {
         Size.Fill -> LinearLayout.LayoutParams.MATCH_PARENT
         Size.Wrap -> LinearLayout.LayoutParams.WRAP_CONTENT
-        is Size.Const -> Math.round(context.resources.displayMetrics.density * it.dp)
+        is Size.Const -> it.dp.toDp(context)
       }
       child.view.requestLayout()
     }
@@ -68,22 +67,23 @@ class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
       layoutParams.height = when (it) {
         Size.Fill -> LinearLayout.LayoutParams.MATCH_PARENT
         Size.Wrap -> LinearLayout.LayoutParams.WRAP_CONTENT
-        is Size.Const -> Math.round(context.resources.displayMetrics.density * it.dp)
+        is Size.Const -> it.dp.toDp(context)
       }
       child.view.requestLayout()
     }
     gravity.subscribe {
       when (it) {
-        Gravity.StartTop -> layoutParams.gravity = android.view.Gravity.START or android.view.Gravity.TOP
-        Gravity.StartCenter -> layoutParams.gravity = android.view.Gravity.START or android.view.Gravity.CENTER_VERTICAL
-        Gravity.StartBottom -> layoutParams.gravity = android.view.Gravity.START or android.view.Gravity.BOTTOM
-        Gravity.CenterTop -> layoutParams.gravity = android.view.Gravity.CENTER_HORIZONTAL or android.view.Gravity.TOP
-        Gravity.Center -> layoutParams.gravity = android.view.Gravity.CENTER
-        Gravity.CenterBottom -> layoutParams.gravity = android.view.Gravity.CENTER_HORIZONTAL or android.view.Gravity.BOTTOM
-        Gravity.EndTop -> layoutParams.gravity = android.view.Gravity.END or android.view.Gravity.TOP
-        Gravity.EndCenter -> layoutParams.gravity = android.view.Gravity.END or android.view.Gravity.CENTER_VERTICAL
-        Gravity.EndBottom -> layoutParams.gravity = android.view.Gravity.END or android.view.Gravity.BOTTOM
+        Gravity.StartTop -> layoutParams.gravity = AndroidGravity.START or AndroidGravity.TOP
+        Gravity.StartCenter -> layoutParams.gravity = AndroidGravity.START or AndroidGravity.CENTER_VERTICAL
+        Gravity.StartBottom -> layoutParams.gravity = AndroidGravity.START or AndroidGravity.BOTTOM
+        Gravity.CenterTop -> layoutParams.gravity = AndroidGravity.CENTER_HORIZONTAL or AndroidGravity.TOP
+        Gravity.Center -> layoutParams.gravity = AndroidGravity.CENTER
+        Gravity.CenterBottom -> layoutParams.gravity = AndroidGravity.CENTER_HORIZONTAL or AndroidGravity.BOTTOM
+        Gravity.EndTop -> layoutParams.gravity = AndroidGravity.END or AndroidGravity.TOP
+        Gravity.EndCenter -> layoutParams.gravity = AndroidGravity.END or AndroidGravity.CENTER_VERTICAL
+        Gravity.EndBottom -> layoutParams.gravity = AndroidGravity.END or AndroidGravity.BOTTOM
       }
     }
+    addMargins(child = child, margin = margin)
   }
 }
