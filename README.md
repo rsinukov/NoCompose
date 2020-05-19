@@ -104,3 +104,34 @@ data class State private constructor(
 ```
 renders:
 [Render](render.webm)
+
+### Extra
+#### map
+```kotlin
++label(
+  text = state.title.map { getString(R.string.title_format, it) }
+)
+```
+#### combineWith
+```kotlin
++label(
+  text = state.title.combineWith(state.desc) { title, desc -> "$title $desc"}
+)
+```
+### conditions
+```kotlin
+condition(
+  value = state.showLoading,
+  viewT = label(
+    text = static("Loading")
+  ).layout {
+    gravity = static(Gravity.Center)
+  },
+  viewF = label(
+    text = state.data
+  ).layout {
+    width = static(Size.Fill)
+    height = static(Size.Fill)
+  }
+)
+```

@@ -2,13 +2,13 @@ package com.rstk.nocompose
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.rstk.nocompose.lib.components.*
 import com.rstk.nocompose.lib.components.ContainerComponent.Size.Const
 import com.rstk.nocompose.lib.components.ContainerComponent.Size.Wrap
 import com.rstk.nocompose.lib.components.Label.TextAlignment
-import com.rstk.nocompose.lib.components.Margin
-import com.rstk.nocompose.lib.components.Padding
-import com.rstk.nocompose.lib.components.Row
 import com.rstk.nocompose.lib.databinding.StateValue
+import com.rstk.nocompose.lib.databinding.combineWith
+import com.rstk.nocompose.lib.databinding.map
 import com.rstk.nocompose.lib.databinding.static
 import com.rstk.nocompose.lib.dsl.*
 
