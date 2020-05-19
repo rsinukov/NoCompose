@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val view = viewTree(this, State.create()) {
+    val view = viewTree(this, State()) {
       column {
         +label(
           text = static("It's my sample"),
@@ -84,23 +84,12 @@ class MainActivity : AppCompatActivity() {
   }
 }
 
-data class State private constructor(
-  val title: StateValue<String>,
-  val desc: StateValue<String>,
-  val count: StateValue<Int>,
-  val showTrue: StateValue<Boolean>
-) {
-  companion object {
-    fun create(): State {
-      return State(
-        title = StateValue.createDefault("user1"),
-        desc = StateValue.createDefault("I like Kotlin"),
-        count = StateValue.createDefault(0),
-        showTrue = StateValue.createDefault(true)
-      )
-    }
-  }
-}
+data class State(
+  val title: StateValue<String> = StateValue.createDefault("user1"),
+  val desc: StateValue<String> = StateValue.createDefault("I like Kotlin"),
+  val count: StateValue<Int> = StateValue.createDefault(0),
+  val showTrue: StateValue<Boolean> = StateValue.createDefault(true)
+)
 ```
 renders:
 [Render](render.webm)
@@ -115,7 +104,7 @@ renders:
 #### combineWith
 ```kotlin
 +label(
-  text = state.title.combineWith(state.desc) { title, desc -> "$title $desc"}
+  text = state.title.combineWith(state.desc) { title, desc -> "$title $desc" }
 )
 ```
 ### conditions
