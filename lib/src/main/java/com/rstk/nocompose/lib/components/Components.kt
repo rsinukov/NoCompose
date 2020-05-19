@@ -23,7 +23,6 @@ class Label(
   override val view: TextView by lazy { TextView(context) }
 
   init {
-    init()
     text.subscribe { view.text = it }
     alignment.subscribe {
       when (it) {
@@ -51,7 +50,6 @@ class Button(
   override val view: Button = Button(context)
 
   init {
-    init()
     text.subscribe { view.text = it }
     view.setOnClickListener { onPress.invoke() }
   }
@@ -63,7 +61,6 @@ class Image(context: Context, imageResId: Observable<Int?>) : Component<ImageVie
   override val view: ImageView by lazy { ImageView(context) }
 
   init {
-    init()
     imageResId.subscribe { resId ->
       view.setImageDrawable(resId?.let { context.resources.getDrawable(it) })
     }
@@ -74,8 +71,4 @@ class Image(context: Context, imageResId: Observable<Int?>) : Component<ImageVie
 class Space(context: Context) : Component<Space>(context) {
 
   override val view: Space by lazy { Space(context) }
-
-  init {
-    init()
-  }
 }

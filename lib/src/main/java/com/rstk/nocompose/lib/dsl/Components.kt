@@ -10,7 +10,7 @@ fun <S> ViewTree<S>.label(
   padding: Observable<Padding> = static(Padding.create(0))
 ): Label {
   return Label(context, text, alignment).apply {
-    this.padding = padding
+    setPadding(padding)
   }
 }
 
@@ -20,7 +20,7 @@ fun <S> ViewTree<S>.button(
   onPress: () -> Unit
 ): Button {
   return Button(context, text, onPress).apply {
-    this.padding = padding
+    setPadding(padding)
   }
 }
 
@@ -29,7 +29,7 @@ fun <S> ViewTree<S>.image(
   padding: Observable<Padding> = static(Padding.create(0))
 ): Image {
   return Image(context, imageResId).apply {
-    this.padding = padding
+    setPadding(padding)
   }
 }
 

@@ -16,7 +16,8 @@ class MainActivity : AppCompatActivity() {
     val view = viewTree(this, State.create()) {
       column {
         +label(
-          text = static("It's my sample")
+          text = static("It's my sample"),
+          padding = static(Padding.create(8))
         )
 
         +row {
@@ -25,11 +26,20 @@ class MainActivity : AppCompatActivity() {
           ).layout {
             width = static(Const(48))
             height = static(Const(48))
+            margin = static(Margin.create(8))
           }
 
           +column {
-            +label(text = state.title, alignment = static(TextAlignment.StartTop))
-            +label(text = state.desc, alignment = static(TextAlignment.StartTop))
+            +label(
+              text = state.title,
+              alignment = static(TextAlignment.StartTop),
+              padding = static(Padding.create(vertical = 4))
+            )
+            +label(
+              text = state.desc,
+              alignment = static(TextAlignment.StartTop),
+              padding = static(Padding.create(bottom = 8))
+            )
           }.layout {
             weight = static(1F)
             height = static(Wrap)
@@ -41,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             width = static(Const(32))
             height = static(Const(32))
             gravity = static(Row.Gravity.Center)
+            margin = static(Margin.create(8))
           }
         }
 
@@ -51,7 +62,9 @@ class MainActivity : AppCompatActivity() {
         +button(
           text = static("Change state"),
           onPress = { changeState(state) }
-        )
+        ).layout {
+          margin = static(Margin.create(8))
+        }
       }
     }
 

@@ -12,9 +12,7 @@ abstract class Component<V : View>(val context: Context) {
 
   abstract val view: V
 
-  var padding: Observable<Padding> = static(Padding.create(0))
-
-  protected fun init() {
+  fun setPadding(padding: Observable<Padding>) {
     padding.subscribe {
       view.setPaddingRelative(
         it.start.toDp(view.context),

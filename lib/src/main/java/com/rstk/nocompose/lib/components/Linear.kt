@@ -87,10 +87,6 @@ abstract class RowColumn(context: Context) : ContainerComponent<LinearLayout>(co
 
   override val view: LinearLayout by lazy { LinearLayout(context) }
 
-  init {
-    init()
-  }
-
   protected fun <V : View> layoutChild(
     width: Observable<Size>,
     height: Observable<Size>,

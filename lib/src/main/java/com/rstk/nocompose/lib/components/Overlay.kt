@@ -18,10 +18,6 @@ class Overlay(context: Context) : ContainerComponent<FrameLayout>(context) {
 
   override val view: FrameLayout by lazy { FrameLayout(context) }
 
-  init {
-    init()
-  }
-
   fun <V : View> Component<V>.layout(
     paramsBuilder: LayoutParams.() -> Unit
   ): Component<V> {
