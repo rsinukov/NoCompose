@@ -121,7 +121,6 @@ data class State(
   val user2: UserState = UserState(
     name = StateValue.createDefault("user2"),
     desc = StateValue.createDefault("I like kotlin")
-
   )
 ) {
   data class UserState(
